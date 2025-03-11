@@ -39,15 +39,12 @@ def is_inside(inner_box, outer_box):
     center_y = (y1 + y2) / 2
     return (ox1 <= center_x <= ox2) and (oy1 <= center_y <= oy2)
 
-# Fungsi untuk memperbarui file CSV secara real time dengan mempertahankan data lama
 def update_csv(new_data, old_data, csv_file='pelanggar.csv'):
     with open(csv_file, 'w', newline='') as file:
          writer = csv.writer(file)
          writer.writerow(["no", "jenis kendaraan", "img pelanggar", "jenis pelanggaran", "No TNKB"])
-         # Tulis data lama yang sudah ada, kemudian data baru dari sesi berjalan
          writer.writerows(old_data + new_data)
 
-# Inisialisasi model
 model = YOLO(SOURCE_MODEL)
 
 # Mapping class dan warna
@@ -82,8 +79,6 @@ background_color = (200, 200, 200)
 # Buat folder untuk menyimpan foto pelanggar jika belum ada
 os.makedirs("image_pelanggar", exist_ok=True)
 
-# Inisialisasi list untuk menyimpan informasi pelanggar pada sesi ini
-# tiap elemen: {'box':, 'row_no':, 'motor_file':, 'tnkb_conf':, 'tnkb_file':}
 captured_motors = []
 csv_data = []
 
@@ -102,7 +97,6 @@ if os.path.exists(csv_file):
             except:
                 start_counter = 0
 
-# new_counter akan digunakan untuk melanjutkan penomoran
 new_counter = start_counter
 
 # Inisialisasi video
@@ -141,7 +135,7 @@ while cap.isOpened():
         if m_conf < MOTOR_CONF_THRESHOLD:
             continue
 
-        # Cek apakah ada tanpa helm dalam motor
+        # Cek apakah ada pengendara tanpa helm dalam motor
         has_wh = False
         for wh in without_helmets:
             wh_box, wh_conf = wh
@@ -159,14 +153,13 @@ while cap.isOpened():
         m_box, _ = motor
         x1, y1, x2, y2 = map(int, m_box)
         
-        # Gambar kotak motor dan label
         cv2.rectangle(frame, (x1, y1), (x2, y2), colors["Motor"], BOUNDING_BOX_THICKNESS)
         label = display_names[motor_class]
         (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, LABEL_FONT_SCALE, LABEL_FONT_THICKNESS)
         cv2.rectangle(frame, (x1, y1-th-4), (x1+tw, y1), background_color, -1)
         cv2.putText(frame, label, (x1, y1-4), cv2.FONT_HERSHEY_SIMPLEX, LABEL_FONT_SCALE, text_color, LABEL_FONT_THICKNESS)
 
-        # Cek apakah motor ini sudah pernah dideteksi (berdasarkan IoU)
+        # Cek apakah motor ini sudah pernah dideteksi
         motor_found = False
         for captured in captured_motors:
             if compute_iou(m_box, captured['box']) >= 0.5:
@@ -188,7 +181,6 @@ while cap.isOpened():
                         best_file = tnkb_filename
                 captured['tnkb_conf'] = best_conf
                 captured['tnkb_file'] = best_file
-                # Update file TNKB pada data CSV (indeks disesuaikan dengan urutan baru pada sesi ini)
                 csv_data[captured['row_no'] - (start_counter + 1)][4] = best_file
                 csv_updated = True
                 break
@@ -241,8 +233,6 @@ while cap.isOpened():
                 cv2.rectangle(frame, (x1wh, y1wh-th-4), (x1wh+tw, y1wh), background_color, -1)
                 cv2.putText(frame, label_wh, (x1wh, y1wh-4), cv2.FONT_HERSHEY_SIMPLEX, LABEL_FONT_SCALE, text_color, LABEL_FONT_THICKNESS)
 
-    # Gambar bounding box TNKB secara terpisah (untuk tampilan)
-    # Hanya gambar TNKB jika berada di dalam motor valid (yang memiliki label Without helmet)
     for tnkb in tnkbs:
         t_box, t_conf = tnkb
         if t_conf < TNKB_CONF_THRESHOLD_LOW:
@@ -262,7 +252,6 @@ while cap.isOpened():
         cv2.rectangle(frame, (x1_t, y1_t-th-4), (x1_t+tw, y1_t), background_color, -1)
         cv2.putText(frame, label_tnkb, (x1_t, y1_t-4), cv2.FONT_HERSHEY_SIMPLEX, LABEL_FONT_SCALE, text_color, LABEL_FONT_THICKNESS)
 
-    # Jika ada perubahan data, perbarui file CSV secara real time dengan menambahkan data baru ke data lama
     if csv_updated:
         update_csv(csv_data, old_data, csv_file)
 
