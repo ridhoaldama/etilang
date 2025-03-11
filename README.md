@@ -1,4 +1,4 @@
-# 🚀 Pendeteksian Pelanggaran Helm dengan YOLO v8
+# 🚀 Pendeteksian Pelanggaran Helm dengan YOLOv8
 
 Proyek ini bertujuan untuk mendeteksi pengendara motor yang tidak memakai helm menggunakan model YOLO dan OpenCV. Program akan membaca video, mendeteksi kendaraan, mengidentifikasi apakah pengendara memakai helm atau tidak, serta mengenali TNKB (nomor kendaraan). Data pelanggar akan disimpan secara otomatis dalam file CSV dan gambar mereka akan disimpan untuk referensi lebih lanjut.
 
