@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Pelanggar Lalu Lintas</title>
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .table-container {
+      margin: 30px auto;
+      max-width: 1200px;
+    }
+    table {
+      background-color: #ffffff;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      vertical-align: middle;
+    }
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      transition: none;
+    }
+    .header-title {
+      text-align: center;
+      margin: 20px 0;
+      font-weight: 600;
+      color: #343a40;
+    }
+  </style>
+</head>
+<body>
+  <div class="container table-container">
+    <h1 class="header-title">Data Pelanggar Lalu Lintas</h1>
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>No</th>
+          <th>Jenis Kendaraan</th>
+          <th>Img Pelanggar</th>
+          <th>Jenis Pelanggaran</th>
+          <th>No TNKB</th>
+        </tr>
+      </thead>
+      <tbody id="dataTable">
+        <!-- Data dari CSV akan dimasukkan di sini -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Fungsi sederhana untuk memparsing CSV (untuk CSV sederhana)
+    function parseCSV(csvText) {
+      const rows = csvText.trim().split('\n');
+      return rows.map(row => row.split(',').map(cell => cell.trim()));
+    }
+
+    // Fungsi untuk memuat data CSV dan membangun tabel
+    function loadData() {
+      fetch('pelanggar.csv')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Gagal mengambil file CSV.');
+          }
+          return response.text();
+        })
+        .then(csvText => {
+          const data = parseCSV(csvText);
+          const tbody = document.getElementById('dataTable');
+          tbody.innerHTML = ''; // Bersihkan data lama sebelum menambahkan data baru
+          // Anggap baris pertama sebagai header, mulai dari baris kedua
+          for (let i = 1; i < data.length; i++) {
+            const row = data[i];
+            const tr = document.createElement('tr');
+            // row: [no, jenis kendaraan, img pelanggar, jenis pelanggaran, No TNKB]
+            row.forEach((cell, index) => {
+              const td = document.createElement('td');
+              if (index === 2) { // Kolom img pelanggar
+                const img = document.createElement('img');
+                // Tambahkan cache busting agar foto selalu diambil ulang
+                img.src = cell + '?t=' + new Date().getTime();
+                img.alt = "Gambar Pelanggar";
+                td.appendChild(img);
+              } else if (index === 4) { // Kolom No TNKB
+                if (cell.toLowerCase() === "unknow") {
+                  td.textContent = "TNKB Tidak Terbaca";
+                } else {
+                  const tnkbImg = document.createElement('img');
+                  tnkbImg.src = cell + '?t=' + new Date().getTime();
+                  tnkbImg.alt = "TNKB";
+                  tnkbImg.onerror = function() {
+                    td.textContent = "TNKB Tidak Terbaca";
+                  };
+                  td.appendChild(tnkbImg);
+                }
+              } else {
+                td.textContent = cell;
+              }
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('dataTable').innerHTML = `<tr><td colspan="5" class="text-center text-danger">${error.message}</td></tr>`;
+        });
+    }
+
+    // Muat data pertama kali saat halaman dibuka
+    loadData();
+    // Perbarui data setiap 5 detik (5000 milidetik)
+    setInterval(loadData, 2000);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
