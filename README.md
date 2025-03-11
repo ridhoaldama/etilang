@@ -1,4 +1,4 @@
-# 🚀 Pendeteksian Pelanggaran Helm dengan YOLOv8
+# 🚀 Pendeteksian Pelanggaran Helm dengan YOLO
 
 Proyek ini bertujuan untuk mendeteksi pengendara motor yang tidak memakai helm menggunakan model YOLO dan OpenCV. Program akan membaca video, mendeteksi kendaraan, mengidentifikasi apakah pengendara memakai helm atau tidak, serta mengenali TNKB (nomor kendaraan). Data pelanggar akan disimpan secara otomatis dalam file CSV dan gambar mereka akan disimpan untuk referensi lebih lanjut.
 
@@ -11,7 +11,7 @@ Proyek ini bertujuan untuk mendeteksi pengendara motor yang tidak memakai helm m
 
 ## 🛠️ Instalasi dan Penggunaan
 ### 1️⃣ Persyaratan
-Pastikan Anda memiliki Python 3.x dan menginstal pustaka berikut:
+Pastikan Anda memiliki Python versi **3.8 - 3.12** dan menginstal pustaka berikut:
 ```bash
 pip install opencv-python numpy ultralytics
 ```
@@ -19,12 +19,12 @@ pip install opencv-python numpy ultralytics
 ### 2️⃣ Clone Repository
 ```bash
 git clone https://github.com/username/repository-name.git
-cd repository-name
+cd etilang
 ```
 
 ### 3️⃣ Letakkan Model YOLO dan Video
-- Letakkan model YOLO yang telah dilatih (`best.pt`) dalam folder proyek.
-- Pastikan file video (`tes.mp4`) tersedia.
+- **Model YOLO (`best.pt`)**: Letakkan model YOLO yang telah dilatih di dalam folder proyek. Jika belum memiliki model, silakan latih menggunakan YOLOv8 atau gunakan model yang sudah ada.
+- **File Video (`tes.mp4`)**: Gantilah dengan video yang ingin Anda analisis. Pastikan format dan resolusinya sesuai dengan kebutuhan.
 
 ### 4️⃣ Jalankan Program
 ```bash
@@ -39,8 +39,8 @@ python main.py
 ├── 📄 README.md            # Dokumentasi
 ├── 📂 image_pelanggar/     # Folder untuk menyimpan gambar pelanggar
 ├── 📄 pelanggar.csv        # Data pelanggar dalam format CSV
-├── 📄 best.pt              # Model YOLO
-└── 📄 tes.mp4              # Video input
+├── 📄 best.pt              # Model YOLO (edit sesuai model Anda)
+└── 📄 tes.mp4              # Video input (ganti dengan video yang ingin dianalisis)
 ```
 
 ## 📊 Format CSV
@@ -61,6 +61,9 @@ TNKB_CONF_THRESHOLD_HIGH = 0.5
 
 ## 🤝 Kontribusi
 Jika Anda ingin berkontribusi, silakan fork repository ini, buat branch baru, dan ajukan pull request. Kami sangat menghargai kontribusi Anda!
+
+## 📜 Lisensi
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 
 ---
 
