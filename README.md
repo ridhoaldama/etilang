@@ -18,7 +18,7 @@ pip install opencv-python numpy ultralytics
 
 ### 2️⃣ Clone Repository
 ```bash
-git clone https://github.com/username/repository-name.git
+git clone https://github.com/ridhoaldama/etilang
 cd etilang
 ```
 
